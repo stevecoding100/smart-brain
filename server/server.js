@@ -41,16 +41,19 @@ app.use(cors());
 app.post("/detect", (req, res) => {
     clarifiapi.handleClarifiApiCall(req, res);
 });
-// Get all users
 app.get("/", (req, res) => {
-    db.select("*")
-        .from("users")
-        .then((users) => {
-            if (users.length) {
-                res.json(users);
-            }
-        });
+    res.send("Hello, World!");
 });
+// Get all users
+// app.get("/", (req, res) => {
+//     db.select("*")
+//         .from("users")
+//         .then((users) => {
+//             if (users.length) {
+//                 res.json(users);
+//             }
+//         });
+// });
 
 // Signing route
 app.post("/signin", (req, res) => {
