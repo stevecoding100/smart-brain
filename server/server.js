@@ -10,6 +10,7 @@ const profile = require("./controllers/profile");
 const image = require("./controllers/image");
 const clarifiapi = require("./controllers/apicall");
 require("dotenv").config();
+
 const db = knex({
     client: "pg",
     connection: {
@@ -23,20 +24,6 @@ const db = knex({
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
-
-// const databases = {
-//     users: [
-//         {
-//             id: "1",
-//             name: "Annes",
-//             email: "anne@gmail.com",
-//             password:
-//                 "$2b$10$Eu5tF/YFtydVF5mCyHB4UO1sT5H9VjC9IA/XLOv4CguiHllZt.JQS",
-//             entries: 0,
-//             joined: "2024-11-24T12:27:07.900Z",
-//         },
-//     ],
-// };
 
 app.post("/detect", (req, res) => {
     clarifiapi.handleClarifiApiCall(req, res);
