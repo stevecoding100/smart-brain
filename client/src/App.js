@@ -10,7 +10,7 @@ import { useState } from "react";
 
 function App() {
     const [imageUrl, setImageUrl] = useState("");
-    const [box, setBox] = useState({});
+    const [boxes, setBoxes] = useState([]);
     const [isSignedIn, setIsSignedIn] = useState(false);
     const [route, setRoute] = useState("signin");
     const [user, setUser] = useState({
@@ -21,21 +21,11 @@ function App() {
         joined: "",
     });
 
-    // useEffect(() => {
-    //     fetch("http://localhost:3000")
-    //         .then((res) => res.json())
-    //         .then((user) => console.log(user))
-    //         .catch((err) =>
-    //             console.error("Error fetching from local server", err)
-    //         );
-    // }, []);
-
     const calculateFaceLocation = (data) => {
-        const clarifaiFace =
-            data?.outputs?.[0]?.data?.regions?.[0]?.region_info?.bounding_box;
-        console.log("Bounding Box Data:", clarifaiFace);
-        if (!clarifaiFace) {
-            console.error("Bounding box data not found in response.");
+        // Check if regions exist and map through them
+        const regions = data.outputs?.[0]?.data?.regions;
+        if (!regions || regions.length === 0) {
+            console.log("Bounding boxes data not found in response.");
             return null;
         }
 
@@ -43,12 +33,18 @@ function App() {
         const width = Number(image.width);
         const height = Number(image.height);
 
-        return {
-            leftCol: clarifaiFace.left_col * width,
-            topRow: clarifaiFace.top_row * height,
-            rightCol: width - clarifaiFace.right_col * width,
-            bottomRow: height - clarifaiFace.bottom_row * height,
-        };
+        const faceBoxes = regions.map((face) => {
+            const boundingBox = face.region_info.bounding_box; // Store the bounding box data
+
+            return {
+                leftCol: boundingBox.left_col * width,
+                topRow: boundingBox.top_row * height,
+                rightCol: width - boundingBox.right_col * width,
+                bottomRow: height - boundingBox.bottom_row * height,
+            };
+        });
+
+        return faceBoxes; // Returns an array of face boxes
     };
 
     const onInputChange = (event) => {
@@ -63,6 +59,7 @@ function App() {
         })
             .then((response) => response.json())
             .then((result) => {
+                console.log("Clarifai API Result:", result);
                 if (result) {
                     fetch("http://localhost:3000/image", {
                         method: "PUT",
@@ -87,7 +84,7 @@ function App() {
                 }
                 const faceBox = calculateFaceLocation(result);
                 if (faceBox) {
-                    setBox(faceBox);
+                    setBoxes(faceBox);
                 } else {
                     console.error("No face data found to display.");
                 }
@@ -125,7 +122,7 @@ function App() {
                         onInputChange={onInputChange}
                         onButtonSubmit={handleDetectFace}
                     />
-                    <FaceRecognition imageUrl={imageUrl} box={box} />
+                    <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
                 </>
             )}
         </div>
