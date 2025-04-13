@@ -1,16 +1,17 @@
-# FROM alpine:3.20
 
-FROM node:20-alpine
+FROM node:20.5.1 
 
+# Create app directory
+RUN mkdir -p /usr/src/smart-brain-api
 WORKDIR /usr/src/smart-brain-api
 
-RUN apk add --no-cache bash curl
+# Install app dependencies
+COPY package.json /usr/src/smart-brain-api
+RUN npm install
 
-COPY . .
+# Bundle app source
+COPY . /usr/src/smart-brain-api
 
-RUN npm install --legacy-peer-deps
-
-EXPOSE 3000
-
-CMD ["npm", "start"]
+# Build arguments
+ARG NODE_VERSION=20.5.1
 

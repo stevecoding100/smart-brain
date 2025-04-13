@@ -10,17 +10,16 @@ const signin = require("./controllers/signin");
 const profile = require("./controllers/profile");
 const image = require("./controllers/image");
 const clarifiapi = require("./controllers/apicall");
-require("dotenv").config();
 
-console.log("HOST", process.env.POSTGRES_USER);
 const db = knex({
     client: "pg",
-    connection: {
-        host: process.env.POSTGRES_HOST,
-        user: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
-    },
+    connection: process.env.POSTGRES_URI,
+    // connection: {
+    //     host: process.env.POSTGRES_HOST,
+    //     user: process.env.POSTGRES_USER,
+    //     password: process.env.POSTGRES_PASSWORD,
+    //     database: process.env.POSTGRES_DB,
+    // },
 });
 
 app.use(express.urlencoded({ extended: false }));

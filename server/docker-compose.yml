@@ -6,6 +6,18 @@
 version: "3.8"
 
 services:
+    # PostgreSQL
+    postgres:
+        container_name: postgres
+        build: ./postgres
+        environment:
+            POSTGRES_USER: sally
+            POSTGRES_PASSWORD: secret
+            POSTGRES_DB: smart-brain-docker
+            POSTGRES_HOST: postgres
+        ports:
+            - "5432:5432"
+
     # Backend API
     smart-brain-api:
         container_name: backend
@@ -13,10 +25,11 @@ services:
         command: npm start
         working_dir: /usr/src/smart-brain-api
         environment:
-            POSTGRES_USER: sally
-            POSTGRES_PASSWORD: secret
-            POSTGRES_DB: smart-brain-docker
-            POSTGRES_HOST: postgres
+            POSTGRES_URI: postgres://sally:secret@postgres:5432/smart-brain-docker
+            # POSTGRES_USER: sally
+            # POSTGRES_PASSWORD: secret
+            # POSTGRES_DB: smart-brain-docker
+            # POSTGRES_HOST: postgres
         depends_on:
             - postgres
         ports:
@@ -24,14 +37,3 @@ services:
             #for live code reload
         volumes:
             - ./:/usr/src/smart-brain-api
-
-    # Postgres
-    postgres:
-        environment:
-            POSTGRES_USER: sally
-            POSTGRES_PASSWORD: secret
-            POSTGRES_DB: smart-brain-docker
-            POSTGRES_HOST: postgres
-        image: postgres
-        ports:
-            - "5433:5432"
