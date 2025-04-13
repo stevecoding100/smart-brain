@@ -1,8 +1,9 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const app = express();
 const cors = require("cors");
 const knex = require("knex");
+const morgan = require("morgan");
 
 const register = require("./controllers/register");
 const signin = require("./controllers/signin");
@@ -11,20 +12,21 @@ const image = require("./controllers/image");
 const clarifiapi = require("./controllers/apicall");
 require("dotenv").config();
 
+console.log("HOST", process.env.POSTGRES_USER);
 const db = knex({
     client: "pg",
     connection: {
-        host: "127.0.0.1",
-        user: "stevedelarosa",
-        password: "",
-        database: "smart-brain",
+        host: process.env.POSTGRES_HOST,
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
     },
 });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(morgan("combined"));
 app.use(cors());
-
 app.post("/detect", (req, res) => {
     clarifiapi.handleClarifiApiCall(req, res);
 });

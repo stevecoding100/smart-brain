@@ -1,0 +1,37 @@
+# docker-compose build -- To start file
+# docker-compose down  -- To stop file
+# docker-compose up --build -- Will build the image and start the smart-brain-api service on port 3000.
+# docker-compose up -d  -- Will run in the background
+
+version: "3.8"
+
+services:
+    # Backend API
+    smart-brain-api:
+        container_name: backend
+        build: ./
+        command: npm start
+        working_dir: /usr/src/smart-brain-api
+        environment:
+            POSTGRES_USER: sally
+            POSTGRES_PASSWORD: secret
+            POSTGRES_DB: smart-brain-docker
+            POSTGRES_HOST: postgres
+        depends_on:
+            - postgres
+        ports:
+            - "3000:3000"
+            #for live code reload
+        volumes:
+            - ./:/usr/src/smart-brain-api
+
+    # Postgres
+    postgres:
+        environment:
+            POSTGRES_USER: sally
+            POSTGRES_PASSWORD: secret
+            POSTGRES_DB: smart-brain-docker
+            POSTGRES_HOST: postgres
+        image: postgres
+        ports:
+            - "5433:5432"
